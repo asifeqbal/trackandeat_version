@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2016 Adobe Systems Incorporated. All rights reserved.
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<!--<meta name="format-detection" content="telephone=no" />
+	    <meta name="msapplication-tap-highlight" content="no" />
+	    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width" />
+	     This is a wide open CSP declaration. To lock this down for production, see below. -->
+		<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height" />    
+		<meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' 'unsafe-inline'; media-src *" />
+	    <!-- Good default declaration:
+	    * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+	    * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+	    * Disables use of eval() and inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+	        * Enable inline JS: add 'unsafe-inline' to default-src
+	        * Enable eval(): add 'unsafe-eval' to default-src
+	    * Create your own at http://cspisawesome.com
+	    -->
+	    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: 'unsafe-inline' https://ssl.gstatic.com; style-src 'self' 'unsafe-inline'; media-src *" /> -->
+
+	    <link rel="stylesheet" type="text/css" href="css/index.css" />
+		<style>
+			html, body{width:100%; height:100%;}
+			body{margin:0; padding:0;}
+			/*#overlay::before,
+			#overlay::after{
+				display: block;
+				clear:both;
+				content:'';
+			}
+			#overlay{
+				background-color: rgba(0,0,0,.2);
+				widows: 100%;
+				height: 100%;
+			}*/
+			#blanker{background-image:url('loader.gif'); background-repeat:no-repeat; background-position: center center; display:block; z-index:9998; background-size:50px; position:fixed; top:0;left:0; height:100%; width:100%; background-color: rgba(0,0,0,.5);}
+			#offline-screen{width:100%; height:100%; background:url('connectionlost.png') no-repeat center center; background-color: #00001c; background-size:contain; display:none; z-index:9999; position:fixed; top:0; left:0;}
+		</style>    
+	</head>
+
+	<body>
+		<div id="blanker"></div>
+		<div id="offline-screen"></div>
+		<div class="social-button-facebook button_inline" onclick="browse();"></div>
+		
+		<iframe src="https://www.trackandeat.com/index.php?devType=Android" name="container-frame" id="container-frame" onload="loaded();" seamless="seamless" width="100%" height="100%" style="border:none; position:absolute;"></iframe> 
+
+		<!-- <iframe src="http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android" name="container-frame" id="container-frame" onload="loaded();" seamless="seamless" width="100%" height="100%" style="border:none; position:absolute;"></iframe> -->
+
+	    <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+	    <script type="text/javascript" charset="utf-8" src="js/index.js"></script>
+	    <script type="text/javascript" charset="utf-8" >
+			// Initialize local vars
+			var deviceId;	
+			document.getElementById('offline-screen').style.height = document.body.clientHeight+'px';
+	        document.addEventListener("deviceready", onDeviceReady, false);
+			
+			function loaded(){
+				removeBlanker();
+				// document.getElementById('blanker').style.display = 'none';
+			}
+			function setBlanker(){
+				document.getElementById('blanker').style.display = 'block';
+			}
+			function removeBlanker(){
+				document.getElementById('blanker').style.display = 'none';
+			}
+			function sendMessegeToSite(task,value){
+				var args=new Object();
+				args.task=task;
+				args.reply=value;
+				document.getElementById('container-frame').contentWindow.postMessage(args, '*');
+			}
+			var receiveMessage = function receiveMessage(e){
+				var args = e.data;
+				switch (args.task) {
+					case 'devType':
+						sendMessegeToSite('devType','Android');
+						break;
+					case 'setBlanker':
+						setBlanker();
+						break;
+					case 'removeBlanker':
+						removeBlanker();
+						break;
+					case 'ptintThings':
+						cordova.plugins.printer.print(args.contents,'Document.html' ,function () {
+							alert('printing finished or canceled')
+						});
+						break;
+					case 'pdfDownload':
+						cordova.plugins.printer.print(args.contents,'Document.html' ,function () {
+							alert('printing finished or canceled')
+						});
+						break;
+					case 'qrScanner':
+						cordova.plugins.barcodeScanner.scan(
+							function (result){
+								sendMessegeToSite('qrReply',result.text);
+							},
+							function (error) {
+								alert("Scanning failed: " + error);
+							},
+							{
+								preferFrontCamera : false, // iOS and Android
+								showFlipCameraButton : false, // iOS and Android
+								showTorchButton : false, // iOS and Android
+								torchOn: false, // Android, launch with the torch switched on (if available)
+								saveHistory: false, // Android, save scan history (default false)
+								prompt : "" , // Android
+								resultDisplayDuration: 500, // Android, display scanned text for X ms. 0 suppresses it entirely, default 1500
+								formats : "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
+								orientation : "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
+								disableAnimations : false, // iOS
+								disableSuccessBeep: false // iOS and Android
+	      					}												
+						)
+						break;
+				}
+			};
+			window.addEventListener("message", receiveMessage, false);			
+			
+			function onDeviceReady() {
+				alert('hello');
+					/*	setTimeout(function() {
+						navigator.splashscreen.hide();
+						}, 2000);
+						*/	
+				function downloadFile() {
+					var fileTransfer = new FileTransfer();
+					var uri = encodeURI("http://s14.postimg.org/i8qvaxyup/bitcoin1.jpg");
+					var fileURL =  "///storage/emulated/0/DCIM/myFile";
+					fileTransfer.download(
+						uri, fileURL, function(entry) {
+						 	console.log("download complete: " + entry.toURL());
+						},
+						function(error) {
+							 console.log("download error source " + error.source);
+							 console.log("download error target " + error.target);
+							 console.log("download error code" + error.code);
+						},
+						false, {
+							headers: {
+								"Authorization": "Basic dGVzdHVzZXJuYW1lOnRlc3RwYXNzd29yZA=="
+							}
+						}
+				   	);
+				}
+				
+				var push = PushNotification.init({"android": {"senderID": "460557973166"},"ios": {"alert": "true", "badge": "true", "sound": "true"}, "windows": {} } );
+				push.on('registration', function(data) {
+					deviceId = data.registrationId;
+					alert("device ID:\n" +deviceId);
+					// document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android&deviceId='+deviceId;			
+					document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android&deviceId='+deviceId;			
+				}); 
+				push.on('error', function(e) {
+					notificationFlag = false;
+					// document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android';
+					document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android';				
+				}); 
+				push.on('notification', function(data) {
+					navigator.notification.alert(
+						data.message,         // message
+						null,                 // callback
+						data.title,           // title
+						'Ok'                  // buttonName
+					);			
+				});
+				// Blanker on change
+				document.addEventListener("online", doWhenOnline, false);
+				document.addEventListener("offline", doWhenOffline, false);
+				
+				var networkState = navigator.connection.type;
+				if(networkState == Connection.NONE) {
+				//	alert('offline');
+					doWhenOffline();					
+				}
+				else{
+				//	alert('online');
+					doWhenOnline();
+				} 
+			}
+			function doWhenOnline(){
+			//	alert('online');
+				document.getElementById('offline-screen').style.display = 'none';
+			}
+			function doWhenOffline(){	
+			//	alert('offline');				
+				document.getElementById('offline-screen').style.display = 'block';
+			}
+	    </script>
+	</body>
+
+</html>

@@ -1,0 +1,40 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-barcodescanner": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "cordova-plugin-printer": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "cordova-plugin-screen-orientation": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    },
+    "es6-promise-plugin": {
+      "PACKAGE_NAME": "com.trackandeat.app"
+    }
+  }
+}
