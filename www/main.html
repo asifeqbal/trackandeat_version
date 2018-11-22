@@ -91,7 +91,10 @@
 			}
 			var receiveMessage = function receiveMessage(e){
 				var args = e.data;
-				switch (args.task) {					
+				switch (args.task) {
+					case 'devType':
+						sendMessegeToSite('devType','Android');
+						break;
 					case 'setBlanker':
 						setBlanker();
 						break;
