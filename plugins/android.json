@@ -42,6 +42,9 @@
     },
     "cordova-plugin-splashscreen": {
       "PACKAGE_NAME": "com.trackandeat.old"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.trackandeat.old"
     }
   },
   "dependent_plugins": {
