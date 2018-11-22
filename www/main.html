@@ -139,7 +139,7 @@
 			window.addEventListener("message", receiveMessage, false);			
 			
 			function onDeviceReady() {
-				alert('hello');
+				//alert('hello');
 					/*	setTimeout(function() {
 						navigator.splashscreen.hide();
 						}, 2000);
@@ -168,7 +168,7 @@
 				var push = PushNotification.init({"android": {"senderID": "460557973166"},"ios": {"alert": "true", "badge": "true", "sound": "true"}, "windows": {} } );
 				push.on('registration', function(data) {
 					deviceId = data.registrationId;
-					alert("device ID:\n" +deviceId);
+				//	alert("device ID:\n" +deviceId);
 					// document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android&deviceId='+deviceId;			
 					document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android&deviceId='+deviceId;			
 				}); 
