@@ -169,13 +169,13 @@
 				push.on('registration', function(data) {
 					deviceId = data.registrationId;
 				//	alert("device ID:\n" +deviceId);
-					// document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android&deviceId='+deviceId;			
-					document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android&deviceId='+deviceId;			
+					document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android&deviceId='+deviceId;			
+					// document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android&deviceId='+deviceId;			
 				}); 
 				push.on('error', function(e) {
 					notificationFlag = false;
-					// document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android';
-					document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android';				
+					document.getElementById('container-frame').src = 'https://www.trackandeat.com/index.php?devType=Android';
+					// document.getElementById('container-frame').src = 'http://typo3.vrisini.com/fabdyl/index.php?id=2&devType=Android';				
 				}); 
 				push.on('notification', function(data) {
 					navigator.notification.alert(
